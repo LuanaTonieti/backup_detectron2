@@ -65,6 +65,7 @@ class DatasetMapper:
             recompute_boxes: whether to overwrite bounding box annotations
                 by computing tight bounding boxes from instance mask annotations.
         """
+        recompute_boxes = False
         if recompute_boxes:
             assert use_instance_mask, "recompute_boxes requires instance masks"
         # fmt: off
@@ -87,7 +88,7 @@ class DatasetMapper:
         augs = utils.build_augmentation(cfg, is_train)
         if cfg.INPUT.CROP.ENABLED and is_train:
             augs.insert(0, T.RandomCrop(cfg.INPUT.CROP.TYPE, cfg.INPUT.CROP.SIZE))
-            recompute_boxes = cfg.MODEL.MASK_ON
+            recompute_boxes = False
         else:
             recompute_boxes = False
 

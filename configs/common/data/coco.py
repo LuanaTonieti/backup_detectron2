@@ -16,11 +16,18 @@ dataloader.train = L(build_detection_train_loader)(
     dataset=L(get_detection_dataset_dicts)(names="ball_train"),
     mapper=L(DatasetMapper)(
         is_train=True,
-        augmentations=None,
+        augmentations=[
+            L(T.ResizeShortestEdge)(
+                short_edge_length=(640, 672, 704, 736, 768, 800),
+                sample_style="choice",
+                max_size=1333,
+            ),
+            L(T.RandomFlip)(horizontal=True),
+        ],
         image_format="BGR",
-        use_instance_mask=True,
+        use_instance_mask=False,
     ),
-    total_batch_size=1,
+    total_batch_size=16,
     num_workers=1,
 )
 
@@ -28,12 +35,13 @@ dataloader.test = L(build_detection_test_loader)(
     dataset=L(get_detection_dataset_dicts)(names="ball_test", filter_empty=False),
     mapper=L(DatasetMapper)(
         is_train=False,
-        augmentations=None,
+        augmentations=[
+            L(T.ResizeShortestEdge)(short_edge_length=800, max_size=1333),
+        ],
         image_format="${...train.mapper.image_format}",
     ),
     num_workers=1,
 )
-
 
 dataloader.evaluator = L(COCOEvaluator)(
     dataset_name="${..test.dataset.names}",

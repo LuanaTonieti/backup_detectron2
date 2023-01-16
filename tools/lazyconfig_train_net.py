@@ -76,6 +76,7 @@ def do_train(args, cfg):
     logger = logging.getLogger("detectron2")
     logger.info("Model:\n{}".format(model))
     model.to(cfg.train.device)
+    # model.backbone.net.img_size = 10
 
     cfg.optimizer.params.model = model
     optim = instantiate(cfg.optimizer)
@@ -139,13 +140,18 @@ def main(args):
         print(do_test(cfg, model))
     else:
         cfg.model.backbone.norm = "BN"
+        print("LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL")
         print(cfg.dataloader.train)
+        print("LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL")
         cfg.train.max_iter=500
         cfg.train.output_dir='./train_ball'
         cfg.model.roi_heads.num_classes = 1
         cfg.optimizer.lr=0.001
         cfg.dataloader.train.total_batch_size = 1
+        cfg.model.backbone.net.img_size = 16
         cfg.train.device = "cuda"
+        
+        # cfg.INPUT.MIN_SIZE_TRAIN = 20
         cfg = LazyConfig.apply_overrides(cfg, args.opts)
         do_train(args, cfg)
 
