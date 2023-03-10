@@ -168,6 +168,7 @@ class COCOEvaluator(DatasetEvaluator):
 
             if "instances" in output:
                 instances = output["instances"].to(self._cpu_device)
+                # print(instances)
                 prediction["instances"] = instances_to_coco_json(instances, input["image_id"])
             if "proposals" in output:
                 prediction["proposals"] = output["proposals"].to(self._cpu_device)
@@ -188,6 +189,8 @@ class COCOEvaluator(DatasetEvaluator):
                 return {}
         else:
             predictions = self._predictions
+
+        #print(predictions)
 
         if len(predictions) == 0:
             self._logger.warning("[COCOEvaluator] Did not receive valid predictions.")
@@ -225,6 +228,7 @@ class COCOEvaluator(DatasetEvaluator):
         """
         self._logger.info("Preparing results for COCO format ...")
         coco_results = list(itertools.chain(*[x["instances"] for x in predictions]))
+        #print(coco_results) # chegou vazio aqui
         tasks = self._tasks or self._tasks_from_predictions(coco_results)
 
         # unmap the category ids for COCO
@@ -370,6 +374,8 @@ class COCOEvaluator(DatasetEvaluator):
             precision = precisions[:, :, idx, 0, -1]
             precision = precision[precision > -1]
             ap = np.mean(precision) if precision.size else float("nan")
+            print("AVERAGE PRECISION: " + ap)
+            sleep(50)
             results_per_category.append(("{}".format(name), float(ap * 100)))
 
         # tabulate it
@@ -555,6 +561,7 @@ def _evaluate_box_proposals(dataset_predictions, coco_api, thresholds=None, area
         recalls[i] = (gt_overlaps >= t).float().sum() / float(num_pos)
     # ar = 2 * np.trapz(recalls, thresholds)
     ar = recalls.mean()
+    print("AVERAGE RECALL: " + ar)
     return {
         "ar": ar,
         "recalls": recalls,

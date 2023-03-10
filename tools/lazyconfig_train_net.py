@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3.9
 # Copyright (c) Facebook, Inc. and its affiliates.
 """
 Training script using the new "LazyConfig" python config files.
@@ -36,7 +36,7 @@ from detectron2.data.datasets import register_coco_instances
 from detectron2.data.samplers import RepeatFactorTrainingSampler
 import sys
 sys.path.insert(0, '/home/robo/detectron2/projects/ViTDet/configs/common')
-from coco_loader_lsj import dataloader
+from .projects.ViTDet.configs.common.coco_loader_lsj import dataloader
 from detectron2.config import LazyCall as L
 from detectron2.data import MetadataCatalog
 from detectron2.data.catalog import DatasetCatalog
@@ -148,7 +148,7 @@ def main(args):
         cfg.model.roi_heads.num_classes = 1
         cfg.optimizer.lr=0.001
         cfg.dataloader.train.total_batch_size = 1
-        cfg.model.backbone.net.img_size = 16
+        cfg.model.backbone.net.img_size = 20
         cfg.train.device = "cuda"
         
         # cfg.INPUT.MIN_SIZE_TRAIN = 20
